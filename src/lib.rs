@@ -30,6 +30,7 @@ pub mod components {
 }
 
 pub mod base {
+    pub use crate::basetype::Angle;
     pub use crate::basetype::Angle3D;
     pub use crate::basetype::Coord;
     pub use crate::basetype::Vector3D;

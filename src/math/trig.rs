@@ -5,9 +5,9 @@ use crate::{
 
 pub fn rotate_3d(rel_coord: Vector3D, angle: Angle3D) -> Vector3D {
     let n_vec = rel_coord;
-    let n_vec1 = rotate3d_z(n_vec, angle.yaw);
-    let n_vec2 = rotate3d_y(n_vec1, angle.pitch);
-    rotate3d_x(n_vec2, angle.roll)
+    let n_vec1 = rotate3d_z(n_vec, angle.yaw.get());
+    let n_vec2 = rotate3d_y(n_vec1, angle.pitch.get());
+    rotate3d_x(n_vec2, angle.roll.get())
 }
 
 pub fn rotate3d_x(vector: Vector3D, angle: f64) -> Vector3D {
