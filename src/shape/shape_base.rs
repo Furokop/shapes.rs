@@ -15,9 +15,7 @@ pub struct Shape<'a> {
 impl<'a> Shape<'a> {
     /// Default value for function argument is a function that always returns a null
     /// The points_vec is just an empty vector unless given an argument (probably not needed?)
-    pub fn new(
-        shape_generator: &'a dyn ShapeGen,
-    ) -> Self {
+    pub fn new(shape_generator: &'a dyn ShapeGen) -> Self {
         let points: Vec<Point> = Vec::new();
 
         let mut ret = Self {
@@ -74,7 +72,7 @@ impl Point {
         let normal = self.normal;
 
         return Point::new(
-            trig::rotate_3d(Coord::new(x, y, z), angles),
+            trig::rotate_3d(Vector3D::new(x, y, z), angles).as_coord(),
             normal.rotate(angles),
         );
     }

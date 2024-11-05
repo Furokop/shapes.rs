@@ -10,18 +10,18 @@ pub struct SimpleTerminalBuffer {
 impl SimpleTerminalBuffer {
     pub fn new(size_x: usize, size_y: usize) -> Self {
         // Precreate vectors
-        let buffer = vec![' '; (size_y * size_x) as usize];
-        return Self {
+        let buffer = vec![' '; size_y * size_x];
+        Self {
             size_x,
             size_y,
             buffer,
-        };
+        }
     }
 
     pub fn new_with_buffer(size_x: usize, size_y: usize, buffer: Vec<char>) -> Self {
         let mut ret = Self::new(size_x, size_y);
         ret.replace_buffer(buffer);
-        return ret;
+        ret
     }
 
     pub fn replace_buffer(&mut self, new_buffer: Vec<char>) {
@@ -35,13 +35,23 @@ impl SimpleTerminalBuffer {
     pub fn get(&self, y: usize, x: usize) -> char {
         assert!(y < self.size_y);
         assert!(x < self.size_x);
-        return self.buffer[y * self.size_x + x];
+        self.buffer[y * self.size_x + x]
     }
 
     pub fn set(&mut self, y: usize, x: usize, val: char) {
         assert!(y < self.size_y);
         assert!(x < self.size_x);
         self.buffer[y * self.size_x + x] = val;
+    }
+
+    pub fn print(&self) {
+        for y in 0..self.size_y {
+            for x in 0..self.size_x {
+                let index = y * self.size_x + x;
+                print!("{}", self.buffer[index]);
+            }
+            println!(); // Move to the next line after each row
+        }
     }
 }
 

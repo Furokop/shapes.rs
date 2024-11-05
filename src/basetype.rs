@@ -1,4 +1,5 @@
-use std::ops::{Sub, Add};
+use core::panic;
+use std::ops::{Add, Sub};
 
 /// Z goes up, Y goes sideways
 use crate::math::trig::{self, get_distance};
@@ -67,39 +68,39 @@ impl Add for Coord {
 #[derive(Copy, Clone)]
 pub struct Angle3D {
     /// Roll
-    pub x_angle: f64,
+    pub roll: f64,
     /// Pitch
-    pub y_angle: f64,
+    pub pitch: f64,
     /// Yaw
-    pub z_angle: f64,
+    pub yaw: f64,
 }
 
 impl Angle3D {
     pub fn get(&self) -> (f64, f64, f64) {
-        (self.x_angle, self.y_angle, self.z_angle)
+        (self.roll, self.pitch, self.yaw)
     }
 
     pub fn new(x_angle: f64, y_angle: f64, z_angle: f64) -> Self {
         Self {
-            z_angle,
-            y_angle,
-            x_angle,
+            yaw: z_angle,
+            pitch: y_angle,
+            roll: x_angle,
         }
     }
 
     pub fn mul(&self, mul: f64) -> Self {
         Self {
-            x_angle: self.x_angle * mul,
-            y_angle: self.y_angle * mul,
-            z_angle: self.z_angle * mul,
+            roll: self.roll * mul,
+            pitch: self.pitch * mul,
+            yaw: self.yaw * mul,
         }
     }
 
     pub fn default() -> Self {
         Self {
-            x_angle: 0.0,
-            y_angle: 0.0,
-            z_angle: 0.0,
+            roll: 0.0,
+            pitch: 0.0,
+            yaw: 0.0,
         }
     }
 }
@@ -117,20 +118,23 @@ impl Vector3D {
     }
 
     pub fn new(x: f64, y: f64, z: f64) -> Self {
+        if x == 0.0 && y == 0.0 && z == 0.0 {
+            panic!("Uhh, idk if this should be a panic but you cannot initiate a vector with all zeros")
+        }
         Self { x, y, z }
     }
 
     pub fn default() -> Self {
         Self {
-            x: 0.0,
+            x: 1.0,
             y: 0.0,
             z: 0.0,
         }
     }
 
     pub fn rotate(&self, angle: Angle3D) -> Self {
-        let new_vec = trig::rotate_3d(Coord::new(self.x, self.y, self.z), angle).to_vector();
-        return Vector3D::new(new_vec.x, new_vec.y, new_vec.z);
+        let new_vec = trig::rotate_3d(self.clone(), angle);
+        Vector3D::new(new_vec.x, new_vec.y, new_vec.z)
     }
 
     pub fn mul(&self, mul: f64) -> Self {
@@ -143,11 +147,11 @@ impl Vector3D {
 
     pub fn magnitude(&self) -> f64 {
         let self_as_coord = self.as_coord();
-        return get_distance(&Coord::default(), &self_as_coord);
+        get_distance(&Coord::default(), &self_as_coord)
     }
 
     pub fn dot(&self, other: &Self) -> f64 {
-        return self.x * other.x + self.y * other.y + self.z + other.z;
+        self.x * other.x + self.y * other.y + self.z + other.z
     }
 
     pub fn as_coord(&self) -> Coord {
@@ -155,6 +159,33 @@ impl Vector3D {
             x: self.x,
             y: self.y,
             z: self.z,
+        }
+    }
+
+    pub fn normalise(&self) -> Self {
+        let mag = self.magnitude();
+        Self {
+            x: self.x / mag,
+            y: self.y / mag,
+            z: self.z / mag,
+        }
+    }
+
+    pub fn angle_between(&self, other: Self) -> f64 {
+        let mag_self = self.magnitude();
+        let mag_other = other.magnitude();
+        let dot = self.dot(&other);
+
+        f64::acos(dot / (mag_self * mag_other))
+    }
+
+    pub fn angle(&self) -> Angle3D {
+        let yaw = self.y.atan2(self.x);
+        let pitch = self.z.atan2((self.x.powi(2) + self.y.powi(2)).sqrt());
+        Angle3D {
+            roll: 0.0,
+            pitch,
+            yaw,
         }
     }
 }

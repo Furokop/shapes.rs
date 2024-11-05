@@ -1,14 +1,15 @@
 #![allow(dead_code)]
+#![allow(clippy::should_implement_trait)]
 
 fn main() {}
 
 // Internal Types
 mod basetype;
+mod component;
 mod math;
 mod shape;
 mod util;
 mod view;
-mod component;
 
 // Exports
 pub mod generators {
@@ -29,8 +30,8 @@ pub mod components {
 
 pub mod base {
     pub use crate::basetype::Angle3D;
-    pub use crate::basetype::Vector3D;
     pub use crate::basetype::Coord;
+    pub use crate::basetype::Vector3D;
 }
 
 pub mod buffer {

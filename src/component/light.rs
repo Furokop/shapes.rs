@@ -1,4 +1,3 @@
-use super::*;
 use crate::basetype::*;
 pub struct Light3D {
     pub coord: Coord,

@@ -14,23 +14,21 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
     let (size_x, size_y) = view.get_buffer_size();
 
     let (v_x, v_y, v_z) = view.camera.coord.get();
-
-    let v_a = view.camera.angle;
-    let (_v_ax, v_ay, v_az) = view.camera.angle.get();
+    let v_a = view.camera.angle();
 
     let mut z_buffer = vec![0.0; size_y * size_x];
 
     let mut projected_buffer = SimpleTerminalBuffer::new(size_x, size_y);
 
     let pb_dis = 1.0 / f64::tan(view.camera.fov) * (size_x as f64) / 2.0;
-    // Projected buffer location in xyz
-    let pb_x = f64::cos(v_az) * f64::cos(v_ay) * pb_dis;
-    let pb_y = f64::sin(v_az) * f64::cos(v_ay) * pb_dis;
-    let pb_z = f64::sin(v_ay) * pb_dis;
 
     for obj in &view.objects {
+        let (o_x, o_y, o_z) = obj.location.get();
         for point in &obj.shape.points {
-            let (p_x, p_y, p_z) = point.rel_coord.get();
+            let (mut p_x, mut p_y, mut p_z) = point.rel_coord.get();
+            p_x += o_x;
+            p_y += o_y;
+            p_z += o_z;
 
             // Distance between point and camera in vector
             let pv_x = p_x - v_x;
@@ -42,11 +40,11 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
             let pv_dis = pv.magnitude();
 
             // Camera transform by rotating pv with negative angle of camera
-            let cpv = pv.rotate(v_a.mul(-1.0));
+            let cpv = pv.rotate(v_a);
             let (cpv_x, cpv_y, cpv_z) = cpv.get();
 
-            let buffer_x = (pb_z * cpv_x / cpv_z + pb_x) as usize;
-            let buffer_y = (pb_z * cpv_y / cpv_z + pb_y) as usize;
+            let buffer_x = ((cpv_y / cpv_x) * pb_dis + (size_x as f64 / 2.0)) as usize;
+            let buffer_y = ((cpv_z / cpv_x) * pb_dis + (size_y as f64 / 2.0)) as usize;
 
             // Prevent going out of bounds
             if buffer_x >= size_x || buffer_y >= size_y {
@@ -56,7 +54,7 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
             if z_buffer[buffer_y * size_x + buffer_x] < pv_dis {
                 z_buffer[buffer_y * size_x + buffer_x] = pv_dis;
 
-                let p_normal = point.normal;
+                let p_normal = point.normal.normalise();
 
                 let mut lumi_index: i32 = 0;
                 for light in &view.lights {
@@ -65,15 +63,17 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
                     let lp_x = l_x - p_x;
                     let lp_y = l_y - p_y;
                     let lp_z = l_z - p_z;
-                    let lp = Vector3D::new(lp_x, lp_y, lp_z);
+                    let lp = Vector3D::new(lp_x, lp_y, lp_z).normalise();
 
-                    let angle =
-                        f64::acos(p_normal.dot(&lp)) / (p_normal.magnitude() * lp.magnitude());
+                    let angle = (p_normal.dot(&lp) / (p_normal.magnitude() * lp.magnitude()))
+                        .clamp(-1.0, 1.0);
+
+                    let angle = angle.acos();
 
                     lumi_index = ((1.0 - angle.abs() / PI) * lumi_length as f64) as i32;
                 }
 
-                if lumi_index < 0 {
+                if lumi_index < 0 || lumi_index >= lumi_length as i32 {
                     continue;
                 }
                 projected_buffer[buffer_y * size_x + buffer_x] =

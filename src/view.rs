@@ -1,6 +1,6 @@
 use crate::basetype::{Angle3D, Coord};
-use crate::util::buffer::SimpleTerminalBuffer;
 use crate::component::*;
+use crate::util::buffer::SimpleTerminalBuffer;
 
 pub struct Viewport<'a> {
     pub camera: Camera,
@@ -30,7 +30,7 @@ impl<'a> Viewport<'a> {
     }
 
     pub fn get_buffer_size(&self) -> (usize, usize) {
-        return (self.buffer.size_x, self.buffer.size_y);
+        (self.buffer.size_x, self.buffer.size_y)
     }
 
     pub fn add_object(&mut self, object: Object<'a>) {
@@ -39,5 +39,9 @@ impl<'a> Viewport<'a> {
 
     pub fn add_light(&mut self, light: Light3D) {
         self.lights.push(light);
+    }
+
+    pub fn print(&self) {
+        self.buffer.print();
     }
 }
