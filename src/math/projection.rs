@@ -3,6 +3,8 @@ use crate::view::Viewport;
 
 use core::f64;
 use std::f64::consts::PI;
+use std::thread::sleep;
+use std::time::Duration;
 
 /// Perspective renderer implementation
 pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
@@ -59,7 +61,7 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
                 for light in &view.lights {
                     let light_coord = light.coord;
 
-                    let lp = (light_coord - point_coord).to_vector().normalise();
+                    let lp = (point_coord - light_coord).to_vector().normalise();
 
                     let angle =
                         f64::acos(p_normal.dot(&lp) / (p_normal.magnitude() * lp.magnitude()));
