@@ -3,11 +3,12 @@ use crate::basetype::*;
 pub struct Camera {
     pub coord: Coord,
     pub facing: Vector3D,
-    /// Horizontal fov
+    /// Vertical fov
     pub fov: f64,
 }
 
 impl Camera {
+    /// NOTE: Fov is in radians!!! Also is vertical FOV.
     pub fn new(coord: Coord, facing: Vector3D, fov: f64) -> Self {
         let normalised_facing = facing.normalise();
         Self {

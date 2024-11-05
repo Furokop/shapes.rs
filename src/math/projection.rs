@@ -19,7 +19,7 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
 
     let mut projected_buffer = SimpleTerminalBuffer::new(size_x, size_y);
 
-    let pb_dis = 1.0 / f64::tan(view.camera.fov) * (size_x as f64) / 2.0;
+    let pb_dis = 1.0 / f64::tan(view.camera.fov / 2.0) * ((size_y as f64) / 2.0);
 
     for obj in &view.objects {
         let object_rotation = obj.rotation;
