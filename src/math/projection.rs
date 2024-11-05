@@ -1,4 +1,4 @@
-use crate::util::buffer::SimpleTerminalBuffer;
+use crate::out::terminal::SimpleTerminalBuffer;
 use crate::view::Viewport;
 
 use core::f64;

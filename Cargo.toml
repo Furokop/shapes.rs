@@ -6,4 +6,4 @@ edition = "2021"
 [dependencies]
 
 [lib]
-path = "src/main.rs"
+path = "src/lib.rs"

@@ -8,8 +8,8 @@ fn main() {}
 mod basetype;
 mod component;
 mod math;
+mod out;
 mod shape;
-mod util;
 mod view;
 
 // Exports
@@ -36,7 +36,8 @@ pub mod base {
 }
 
 pub mod buffer {
-    pub use crate::util::buffer::SimpleTerminalBuffer;
+    pub use crate::out::terminal::SimpleTerminalBuffer;
+    pub use crate::out::Buffer;
 }
 
 pub use crate::component::Object;

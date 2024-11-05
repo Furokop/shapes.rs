@@ -1,5 +1,6 @@
 use crate::component::*;
-use crate::util::buffer::SimpleTerminalBuffer;
+use crate::out::terminal::SimpleTerminalBuffer;
+use crate::out::Buffer;
 
 pub struct Viewport<'a> {
     pub camera: Camera,
