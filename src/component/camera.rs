@@ -4,12 +4,12 @@ pub struct Camera {
     pub coord: Coord,
     pub facing: Vector3D,
     /// Vertical fov
-    pub fov: f64,
+    pub fov: Angle,
 }
 
 impl Camera {
     /// NOTE: Fov is in radians!!! Also is vertical FOV.
-    pub fn new(coord: Coord, facing: Vector3D, fov: f64) -> Self {
+    pub fn new(coord: Coord, facing: Vector3D, fov: Angle) -> Self {
         let normalised_facing = facing.normalise();
         Self {
             coord,

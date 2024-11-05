@@ -1,5 +1,8 @@
 use core::panic;
-use std::ops::{Add, Sub};
+use std::{
+    f64::consts::PI,
+    ops::{Add, Div, Mul, Sub},
+};
 
 /// Z goes up, Y goes sideways
 use crate::math::trig::{self, get_distance};
@@ -68,35 +71,36 @@ impl Add for Coord {
 #[derive(Copy, Clone)]
 pub struct Angle3D {
     /// Roll
-    pub roll: f64,
+    pub roll: Angle,
     /// Pitch
-    pub pitch: f64,
+    pub pitch: Angle,
     /// Yaw
-    pub yaw: f64,
+    pub yaw: Angle,
 }
 
 impl Angle3D {
-    pub fn get(&self) -> (f64, f64, f64) {
+    pub fn get(&self) -> (Angle, Angle, Angle) {
         (self.roll, self.pitch, self.yaw)
     }
 
-    pub fn new(roll: f64, pitch: f64, yaw: f64) -> Self {
+    pub fn new(roll: Angle, pitch: Angle, yaw: Angle) -> Self {
         Self { yaw, pitch, roll }
     }
 
     pub fn mul(&self, mul: f64) -> Self {
+        let as_angle = Angle::from_radian(mul);
         Self {
-            roll: self.roll * mul,
-            pitch: self.pitch * mul,
-            yaw: self.yaw * mul,
+            roll: self.roll * as_angle,
+            pitch: self.pitch * as_angle,
+            yaw: self.yaw * as_angle,
         }
     }
 
     pub fn default() -> Self {
         Self {
-            roll: 0.0,
-            pitch: 0.0,
-            yaw: 0.0,
+            roll: Angle::from_radian(0.0),
+            pitch: Angle::from_radian(0.0),
+            yaw: Angle::from_radian(0.0),
         }
     }
 }
@@ -199,12 +203,74 @@ impl Vector3D {
     }
 
     pub fn angle(&self) -> Angle3D {
-        let yaw = self.y.atan2(self.x);
-        let pitch = self.z.atan2((self.x.powi(2) + self.y.powi(2)).sqrt());
+        let yaw = Angle::from_radian(self.y.atan2(self.x));
+        let pitch = Angle::from_radian(self.z.atan2((self.x.powi(2) + self.y.powi(2)).sqrt()));
         Angle3D {
-            roll: 0.0,
+            roll: Angle::from_radian(0.0),
             pitch,
             yaw,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct Angle {
+    /// In radians
+    angle: f64,
+}
+
+impl Angle {
+    pub fn from_radian(angle: f64) -> Self {
+        Self { angle }
+    }
+
+    pub fn from_degree(angle: f64) -> Self {
+        Self {
+            angle: angle / (360.0 / (2.0 * PI)),
+        }
+    }
+
+    pub fn get(&self) -> f64 {
+        self.angle
+    }
+
+    pub fn default() -> Self {
+        Self { angle: 0.0 }
+    }
+}
+
+impl Mul for Angle {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            angle: self.angle * rhs.angle,
+        }
+    }
+}
+
+impl Div for Angle {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        Self {
+            angle: self.angle / rhs.angle,
+        }
+    }
+}
+
+impl Add for Angle {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            angle: self.angle + rhs.angle,
+        }
+    }
+}
+
+impl Sub for Angle {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            angle: self.angle - rhs.angle,
         }
     }
 }
