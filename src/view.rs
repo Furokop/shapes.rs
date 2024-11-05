@@ -1,4 +1,3 @@
-use crate::basetype::{Angle3D, Coord};
 use crate::component::*;
 use crate::util::buffer::SimpleTerminalBuffer;
 

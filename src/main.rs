@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(clippy::should_implement_trait)]
+#![allow(clippy::needless_return)]
 
 fn main() {}
 

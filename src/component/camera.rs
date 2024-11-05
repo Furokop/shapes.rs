@@ -1,4 +1,5 @@
 use crate::basetype::*;
+#[derive(Clone)]
 pub struct Camera {
     pub coord: Coord,
     pub facing: Vector3D,

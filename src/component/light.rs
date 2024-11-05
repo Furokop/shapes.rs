@@ -1,4 +1,5 @@
 use crate::basetype::*;
+#[derive(Clone)]
 pub struct Light3D {
     pub coord: Coord,
 }

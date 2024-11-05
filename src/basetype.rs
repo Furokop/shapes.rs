@@ -80,12 +80,8 @@ impl Angle3D {
         (self.roll, self.pitch, self.yaw)
     }
 
-    pub fn new(x_angle: f64, y_angle: f64, z_angle: f64) -> Self {
-        Self {
-            yaw: z_angle,
-            pitch: y_angle,
-            roll: x_angle,
-        }
+    pub fn new(roll: f64, pitch: f64, yaw: f64) -> Self {
+        Self { yaw, pitch, roll }
     }
 
     pub fn mul(&self, mul: f64) -> Self {
@@ -102,6 +98,17 @@ impl Angle3D {
             pitch: 0.0,
             yaw: 0.0,
         }
+    }
+}
+
+impl Add for Angle3D {
+    type Output = Angle3D;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self::new(
+            self.roll + rhs.roll,
+            self.pitch + rhs.pitch,
+            self.yaw + rhs.yaw,
+        )
     }
 }
 
@@ -133,7 +140,7 @@ impl Vector3D {
     }
 
     pub fn rotate(&self, angle: Angle3D) -> Self {
-        let new_vec = trig::rotate_3d(self.clone(), angle);
+        let new_vec = trig::rotate_3d(*self, angle);
         Vector3D::new(new_vec.x, new_vec.y, new_vec.z)
     }
 
@@ -151,7 +158,19 @@ impl Vector3D {
     }
 
     pub fn dot(&self, other: &Self) -> f64 {
-        self.x * other.x + self.y * other.y + self.z + other.z
+        let mut x = 0.0;
+        let mut y = 0.0;
+        let mut z = 0.0;
+        if self.x != 0.0 && other.x != 0.0 {
+            x = self.x * other.x;
+        }
+        if self.y != 0.0 && other.y != 0.0 {
+            y = self.y * other.y;
+        }
+        if self.z != 0.0 && other.z != 0.0 {
+            z = self.z * other.z;
+        }
+        x + y + z
     }
 
     pub fn as_coord(&self) -> Coord {

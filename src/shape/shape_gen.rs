@@ -72,7 +72,7 @@ impl TorusGenerator {
         TorusGenerator {
             thickness,
             radius: size,
-            angle_iter: (0.002, 0.002),
+            angle_iter: (0.04, 0.04),
         }
     }
 }
