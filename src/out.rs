@@ -1,5 +1,8 @@
 pub mod terminal;
 
+/// Trait which provides an interface for algoritms and outputs that make use of it.
+/// Traits must be constructed from their own ```::new(...)``` function, 
+/// as I don't believe it makes sense for a trait to provide a constructor.
 pub trait Buffer {
     type Data;
     type Container;
