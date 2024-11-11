@@ -1,11 +1,11 @@
 use crate::out::terminal::SimpleTerminalBuffer;
-use crate::view::Viewport;
+use crate::scene::Scene;
 
 use core::f64;
 use std::f64::consts::PI;
 
 /// Perspective renderer implementation
-pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
+pub fn pers_proj(view: &Scene) -> SimpleTerminalBuffer {
     let luminance_str = ".,-~:;=!*#$@@@";
     let luminance: &[u8] = luminance_str.as_bytes();
     let lumi_length = luminance_str.len();
@@ -43,7 +43,7 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
             let (cpv_x, cpv_y, cpv_z) = cpv.get();
 
             let buffer_x = ((cpv_y / cpv_x) * pb_dis + (size_x as f64 / 2.0)) as usize;
-            let buffer_y = ((cpv_z / cpv_x) * pb_dis + (size_y as f64 / 2.0)) as usize;
+            let buffer_y = (-(cpv_z / cpv_x) * pb_dis + (size_y as f64 / 2.0)) as usize;
 
             // Prevent going out of bounds
             if buffer_x >= size_x || buffer_y >= size_y {
@@ -59,10 +59,10 @@ pub fn pers_proj(view: &Viewport) -> SimpleTerminalBuffer {
                 for light in &view.lights {
                     let light_coord = light.coord;
 
-                    let lp = (point_coord - light_coord).to_vector().normalise();
+                    let lp = (light_coord - point_coord).to_vector().normalise();
 
                     let angle =
-                        f64::acos(p_normal.dot(&lp) / (p_normal.magnitude() * lp.magnitude()));
+                        f64::acos(p_normal.dot(lp) / (p_normal.magnitude() * lp.magnitude()));
 
                     lumi_index = ((1.0 - (angle / PI)) * (lumi_length as f64)) as i32;
                 }
