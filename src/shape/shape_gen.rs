@@ -35,49 +35,51 @@ pub trait ShapeGen {
     fn generate_shape(&self, shape: &mut Shape);
 }
 
-/// Generates a torus using its fields when passed to an object.
-/// ## Example:
+/// Basic binding class that constitutes a scene
+/// Four things must be available (thus constructed if needed) beforehand in order to create a usable scene:
+/// - Any type which implements buffer
+/// - Camera class
+/// - An object class from which image will be generated
+/// - A light source (currently very simple, merely denotes the shading of the object)
+/// - Renderer function which will use all of the above and return a new buffer
+/// ### Example:
 /// ```
 /// use shapes_rs::base::*;
 /// use shapes_rs::buffer::*;
 /// use shapes_rs::components::*;
 /// use shapes_rs::generators::TorusGenerator;
 /// use shapes_rs::renderer;
-/// use shapes_rs::{Object, Viewport};
+/// use shapes_rs::{Object, Scene};
+/// // Define a shape generator
 /// let torusgen = TorusGenerator::new(10.0, 50.0);
-///  // Move torus closer to origin
+/// // Construct an object using the shape generator
 /// let my_torus_object = Object::new(Coord::new(70.0, 0.0, 0.0), &torusgen, Angle3D::default());
-///  // Position light for better illumination
+///
+/// // Light and camera
 /// let my_light = Light3D::new(Coord::new(100.0, 0.0, 500.0));
-///  // Adjust camera position and FOV
 /// let camera = Camera::new(
-///     Coord::new(0.0, 0.0, 0.0),                // Move camera back
-///     Vector3D::new(1.0, 0.0, 0.0).normalise(), // Look towards origin
+///     Coord::new(0.0, 0.0, 0.0),               
+///     Vector3D::new(1.0, 0.0, 0.0).normalise(),
 ///     Angle::from_degree(60.0),
 /// );
+///
+/// // Create any buffer using its own constructor
 /// let output_buffer = SimpleTerminalBuffer::new(150, 50);
-/// let mut viewport = Viewport::new(camera.clone(), output_buffer.clone(), renderer::pers_proj);
-/// viewport.add_light(my_light);
-/// viewport.add_object(my_torus_object);
-/// let mut rot1 = 0.0;
-/// let mut rot2 = 0.0;
-/// loop {
-///    rot1 += 0.1;
-///    rot2 += 0.2;
-///    viewport
-///        .objects
-///        .last_mut()
-///        .expect("Lord save us should this occur")
-///        .rotation = Angle3D::new(
-///        Angle::default(),
-///        Angle::from_radian(rot1),
-///        Angle::from_radian(rot2),
-///    );
-///    let output = viewport.render();
-///    print!("{}[2J", 27 as char);
-///    output.print();
-///    sleep(Duration::from_millis(50));
-///    }
+///
+/// // Assemble the scene
+/// let mut scene = Scene::new(camera.clone(), output_buffer.clone(), renderer::pers_proj);
+///
+/// // Add light source
+/// scene.add_light(my_light);
+///
+/// // Add object
+/// scene.add_object(my_torus_object);
+///
+/// // Get the scene to call the render function. Can also do this manually
+/// let output = scene.render();
+///
+/// // Print the buffer
+/// output.print();
 /// ```
 pub struct TorusGenerator {
     pub thickness: f64,

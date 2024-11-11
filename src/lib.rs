@@ -10,7 +10,7 @@ mod component;
 mod math;
 mod out;
 mod shape;
-mod view;
+mod scene;
 
 // Exports
 pub mod generators {
@@ -42,4 +42,4 @@ pub mod buffer {
 }
 
 pub use crate::component::Object;
-pub use crate::view::Viewport;
+pub use crate::scene::Scene;

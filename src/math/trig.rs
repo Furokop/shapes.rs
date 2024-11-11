@@ -22,8 +22,8 @@ pub fn rotate3d_x(vector: Vector3D, angle: f64) -> Vector3D {
 pub fn rotate3d_y(vector: Vector3D, angle: f64) -> Vector3D {
     let (x, y, z) = vector.get();
 
-    let new_x = x * f64::cos(angle) + z * f64::sin(angle);
-    let new_z = -x * f64::sin(angle) + z * f64::cos(angle);
+    let new_x = x * f64::cos(angle) - z * f64::sin(angle);
+    let new_z = x * f64::sin(angle) + z * f64::cos(angle);
 
     Vector3D::new(new_x, y, new_z)
 }
