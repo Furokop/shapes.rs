@@ -9,11 +9,12 @@ mod basetype;
 mod component;
 mod math;
 mod out;
-mod shape;
 mod scene;
+mod shape;
 
 // Exports
 pub mod generators {
+    pub use crate::shape::shape_gen::CubeGenerator;
     pub use crate::shape::shape_gen::TorusGenerator;
     pub mod selfmade {
         pub use crate::shape::shape_gen::ShapeGen;

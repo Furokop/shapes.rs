@@ -128,3 +128,102 @@ impl ShapeGen for TorusGenerator {
         }
     }
 }
+
+pub struct CubeGenerator {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub node_dis: f64,
+}
+
+impl CubeGenerator {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self {
+            x,
+            y,
+            z,
+            node_dis: 1.0,
+        }
+    }
+}
+
+impl ShapeGen for CubeGenerator {
+    fn generate_shape(&self, shape: &mut Shape) {
+        let edge_z = self.z / 2.0;
+        let edge_y = self.y / 2.0;
+        let edge_x = self.x / 2.0;
+        let node_dis = self.node_dis;
+        // Generate +X facing
+        for z in 0..(self.z / self.node_dis) as usize - 1 {
+            for y in 0..(self.y / self.node_dis) as usize - 1 {
+                let normal = Vector3D::new(1.0, 0.0, 0.0);
+                let coord = Coord::new(
+                    edge_x,
+                    edge_y - y as f64 * node_dis,
+                    edge_z - z as f64 * node_dis,
+                );
+                shape.points.push(Point::new(coord, normal));
+            }
+        }
+        // Generate -X facing
+        for z in 0..(self.z / self.node_dis) as usize - 1 {
+            for y in 0..(self.y / self.node_dis) as usize - 1 {
+                let normal = Vector3D::new(-1.0, 0.0, 0.0);
+                let coord = Coord::new(
+                    -edge_x,
+                    edge_y - y as f64 * node_dis,
+                    edge_z - z as f64 * node_dis,
+                );
+                shape.points.push(Point::new(coord, normal));
+            }
+        }
+        // Generate +Y facing
+        for z in 0..(self.z / self.node_dis) as usize - 1 {
+            for x in 0..(self.x / self.node_dis) as usize - 1 {
+                let normal = Vector3D::new(0.0, 1.0, 0.0);
+                let coord = Coord::new(
+                    edge_x - x as f64 * node_dis,
+                    edge_y,
+                    edge_z - z as f64 * node_dis,
+                );
+                shape.points.push(Point::new(coord, normal));
+            }
+        }
+        // Generate -Y facing
+        for z in 0..(self.z / self.node_dis) as usize - 1 {
+            for x in 0..(self.x / self.node_dis) as usize - 1 {
+                let normal = Vector3D::new(0.0, -1.0, 0.0);
+                let coord = Coord::new(
+                    edge_x - x as f64 * node_dis,
+                    -edge_y,
+                    edge_z - z as f64 * node_dis,
+                );
+                shape.points.push(Point::new(coord, normal));
+            }
+        }
+        // Generate +Z facing
+        for y in 0..(self.y / self.node_dis) as usize - 1 {
+            for x in 0..(self.x / self.node_dis) as usize - 1 {
+                let normal = Vector3D::new(0.0, 0.0, 1.0);
+                let coord = Coord::new(
+                    edge_x - x as f64 * node_dis,
+                    edge_y - y as f64 * node_dis,
+                    edge_z,
+                );
+                shape.points.push(Point::new(coord, normal));
+            }
+        }
+        // Generate -Z facing
+        for y in 0..(self.y / self.node_dis) as usize - 1 {
+            for x in 0..(self.x / self.node_dis) as usize - 1 {
+                let normal = Vector3D::new(0.0, 0.0, -1.0);
+                let coord = Coord::new(
+                    edge_x - x as f64 * node_dis,
+                    edge_y - y as f64 * node_dis,
+                    -edge_z,
+                );
+                shape.points.push(Point::new(coord, normal));
+            }
+        }
+    }
+}
