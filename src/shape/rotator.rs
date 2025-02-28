@@ -50,10 +50,10 @@ impl Rotator {
         let cy = f64::cos(angle.yaw.get() * 0.5);
         let sy = f64::sin(angle.yaw.get() * 0.5);
         Rotator {
-            x: cr * cp * cy + sr * sp * sy,
-            y: sr * cp * cy - cr * sp * sy,
-            z: cr * sp * cy + sr * cp * sy,
-            w: cr * cp * sy - sr * sp * cy,
+            x: sr * cp * cy - cr * sp * sy,  // x
+            y: cr * sp * cy + sr * cp * sy,  // y
+            z: cr * cp * sy - sr * sp * cy,  // z
+            w: cr * cp * cy + sr * sp * sy,  // w (scalar)
         }
     }
     pub fn normalize(&self) -> Self {

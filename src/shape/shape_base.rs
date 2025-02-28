@@ -42,6 +42,12 @@ impl<'a> Shape<'a> {
         return new_shape;
     }
 
+    pub fn rotate_self(&mut self, rotator: &Rotator) {
+        for point in self.points.iter_mut() {
+            point.rotate_self(rotator)
+        }
+    }
+
     fn generate_if_not(&mut self) {
         if !self.generated {
             self.shape_generator.generate_shape(self);
@@ -73,6 +79,10 @@ impl Point {
             rotator.apply(self.rel_coord.to_vector()).as_coord(),
             rotator.apply(self.normal),
         )
+    }
+    pub fn rotate_self(&mut self, rotator: &Rotator) {
+        self.rel_coord = rotator.apply(self.rel_coord.to_vector()).as_coord();
+        self.normal = rotator.apply(self.normal);
     }
 }
 

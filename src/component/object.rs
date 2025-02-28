@@ -39,4 +39,10 @@ impl<'a> Object<'a> {
             self.rotation.clone() + rotator.clone(),
         )
     }
+    pub fn new_from_self_rotate(&self) -> Self {
+        Self::new_with_shape(self.location, self.shape.rotate(&self.rotation), self.rotation.clone())
+    }
+    pub fn apply_rotation(&mut self) {
+        self.shape.rotate_self(&self.rotation);
+    }
 }
