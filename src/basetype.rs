@@ -1,8 +1,8 @@
-use crate::math::trig::{self, get_distance};
+use crate::{math::trig::get_distance, shape::rotator::Rotator};
 use core::panic;
 use std::{
     f64::consts::PI,
-    ops::{Add, Div, Mul, Sub},
+    ops::{Add, Div, Mul, Sub}
 };
 
 /// Basic type which represents a given location in cartesian coordinates
@@ -53,13 +53,14 @@ impl Coord {
     /// use shapes_rs::base::Vector3D;
     /// use shapes_rs::base::Angle3D;
     /// use shapes_rs::base::Angle;
+    /// use shapes_rs::base::Rotator;
     ///
     /// let my_coord = Coord::new(3.0, 0.0, 0.0);
     /// let rotation_angle = Angle3D::new(Angle::default(), Angle::from_degree(90.0), Angle::default());
-    /// let my_coord_rotated = my_coord.to_vector().rotate(rotation_angle).as_coord();
+    /// let rotator = Rotator::from_global(Angle3D::new(Angle::default(), Angle::from_radian(2.0), Angle::default()));
+    /// let my_coord_rotated = rotator.apply(my_coord.to_vector()).as_coord();
     ///
-    /// // Due to floating point goofiness, it won't really equal zero but will be very close to it
-    /// assert!(my_coord_rotated.x - 0.00001 < 0.0);
+    /// assert!(my_coord_rotated.x  < 0.00001);
     /// ```
     pub fn to_vector(&self) -> Vector3D {
         Vector3D::new(self.x, self.y, self.z)
@@ -238,17 +239,16 @@ impl Vector3D {
     /// Rotates a vector
     /// ### Example:
     /// ```
-    /// use shapes_rs::base::{Vector3D, Angle3D, Angle};
+    /// use shapes_rs::base::{Vector3D, Angle3D, Angle, Rotator};
     ///
     /// let my_vec = Vector3D::new(3.0, 0.0, 0.0);
-    /// let my_angle = Angle3D::new(Angle::default(), Angle::from_degree(90.0), Angle::default());
+    /// let my_angle = Rotator::from_global(Angle3D::new(Angle::default(), Angle::from_degree(90.0), Angle::default()));
     ///
-    /// let my_rotated_vec = my_vec.rotate(my_angle);
-    /// assert_eq!(my_rotated_vec.z, 3.0);
+    /// let my_rotated_vec = my_vec.rotate(&my_angle);
+    /// assert_eq!(my_rotated_vec.z as i32, 3);
     /// ```
-    pub fn rotate(&self, angle: Angle3D) -> Self {
-        let new_vec = trig::rotate_3d(*self, angle);
-        Vector3D::new(new_vec.x, new_vec.y, new_vec.z)
+    pub fn rotate(&self, rotator: &Rotator) -> Self {
+        rotator.apply(*self)
     }
 
     pub fn mul(&self, mul: f64) -> Self {
@@ -303,6 +303,14 @@ impl Vector3D {
             z = self.z * other.z;
         }
         x + y + z
+    }
+
+    pub fn cross(&self, other: Self) -> Self {
+        Self {
+            x: self.y * other.z,
+            y: self.z * other.x,
+            z: self.x * other.y
+        }
     }
 
     /// Converts the Vector into coordinates, used for algorithmic purposes
@@ -381,6 +389,39 @@ impl Vector3D {
             roll: Angle::from_radian(0.0),
             pitch,
             yaw,
+        }
+    }
+}
+
+impl Mul<f64> for Vector3D {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs
+        }
+    }
+}
+
+impl Mul<Vector3D> for f64 {
+    type Output = Vector3D;
+    fn mul(self, rhs: Vector3D) -> Self::Output {
+        Vector3D {
+            x: rhs.x * self,
+            y: rhs.y * self,
+            z: rhs.z * self
+        }
+    }
+}
+
+impl Add for Vector3D {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z
         }
     }
 }

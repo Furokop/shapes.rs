@@ -53,7 +53,7 @@ pub trait ShapeGen {
 /// // Define a shape generator
 /// let torusgen = TorusGenerator::new(10.0, 50.0);
 /// // Construct an object using the shape generator
-/// let my_torus_object = Object::new(Coord::new(70.0, 0.0, 0.0), &torusgen, Angle3D::default());
+/// let my_torus_object = Object::new(Coord::new(70.0, 0.0, 0.0), &torusgen, Rotator::default());
 ///
 /// // Light and camera
 /// let my_light = Light3D::new(Coord::new(100.0, 0.0, 500.0));

@@ -1,5 +1,6 @@
 use crate::out::terminal::SimpleTerminalBuffer;
 use crate::scene::Scene;
+use crate::shape::rotator::Rotator;
 
 use core::f64;
 use std::f64::consts::PI;
@@ -22,13 +23,13 @@ pub fn pers_proj(view: &Scene) -> SimpleTerminalBuffer {
     let pb_dis = 1.0 / f64::tan(view.camera.fov.get() / 2.0) * ((size_y as f64) / 2.0);
 
     for obj in &view.objects {
-        let object_rotation = obj.rotation;
+        let object_rotation = &obj.rotation;
         let object_coord = obj.location;
         for point in &obj.shape.points {
             let point_coord = point
                 .rel_coord
                 .to_vector()
-                .rotate(object_rotation)
+                .rotate(&object_rotation)
                 .as_coord()
                 + object_coord;
 
@@ -39,7 +40,7 @@ pub fn pers_proj(view: &Scene) -> SimpleTerminalBuffer {
             let pv_dis = pv.magnitude();
 
             // Camera transform by rotating pv with negative angle of camera
-            let cpv = pv.rotate(v_a.mul(-1.0));
+            let cpv = pv.rotate(&Rotator::from_global(v_a.mul(-1.0)));
             let (cpv_x, cpv_y, cpv_z) = cpv.get();
 
             let buffer_x = ((cpv_y / cpv_x) * pb_dis + (size_x as f64 / 2.0)) as usize;
@@ -53,7 +54,7 @@ pub fn pers_proj(view: &Scene) -> SimpleTerminalBuffer {
             if z_buffer[buffer_y * size_x + buffer_x] > pv_dis {
                 z_buffer[buffer_y * size_x + buffer_x] = pv_dis;
 
-                let p_normal = point.normal.rotate(object_rotation).normalise();
+                let p_normal = point.normal.rotate(&object_rotation).normalise();
 
                 let mut lumi_index: i32 = 0;
                 for light in &view.lights {

@@ -1,6 +1,7 @@
-use crate::basetype::{Angle3D, Coord, Vector3D};
-use crate::math::trig;
+use crate::basetype::{Coord, Vector3D};
 use crate::shape::shape_gen::ShapeGen;
+
+use super::rotator::Rotator;
 
 // Should also have max_x, max_y??
 //
@@ -28,14 +29,14 @@ impl<'a> Shape<'a> {
     }
 
     /// Rotate the shape around itself
-    pub fn rotate(&self, angles: Angle3D) -> Self {
+    pub fn rotate(&self, rotator: &Rotator) -> Self {
         let mut new_shape = Shape {
             points: Vec::new(),
             shape_generator: self.shape_generator,
             generated: true,
         };
         for point in self.points.iter() {
-            let rotated_point = point.rotate(angles);
+            let rotated_point = point.rotate(rotator);
             new_shape.points.push(rotated_point);
         }
         return new_shape;
@@ -67,14 +68,11 @@ impl Point {
     pub fn new(rel_coord: Coord, normal: Vector3D) -> Self {
         return Self { rel_coord, normal };
     }
-    pub fn rotate(&self, angles: Angle3D) -> Self {
-        let (x, y, z) = self.rel_coord.get();
-        let normal = self.normal;
-
-        return Point::new(
-            trig::rotate_3d(Vector3D::new(x, y, z), angles).as_coord(),
-            normal.rotate(angles),
-        );
+    pub fn rotate(&self, rotator: &Rotator) -> Self {
+        Point::new(
+            rotator.apply(self.rel_coord.to_vector()).as_coord(),
+            rotator.apply(self.normal),
+        )
     }
 }
 

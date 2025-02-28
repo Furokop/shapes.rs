@@ -35,6 +35,7 @@ pub mod base {
     pub use crate::basetype::Angle3D;
     pub use crate::basetype::Coord;
     pub use crate::basetype::Vector3D;
+    pub use crate::shape::rotator::Rotator;
 }
 
 pub mod buffer {
