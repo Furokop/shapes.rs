@@ -36,7 +36,7 @@ impl<'a> Object<'a> {
         Self::new_with_shape(
             self.location,
             self.shape.rotate(rotator),
-            self.rotation.clone() + rotator.clone(),
+            self.rotation.clone(),
         )
     }
     pub fn new_from_self_rotate(&self) -> Self {

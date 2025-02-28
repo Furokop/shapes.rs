@@ -1,15 +1,8 @@
-/*  Rotator file with utility functions
- *
- *  Ideas: Rotator struct with timers
- *  Ideas: On-demand rotation
- *  Ideas: Above but with pregenerated
- *  Ideas: Buffer results
- */
 use crate::basetype::Angle3D;
 use crate::basetype::Vector3D;
-use std::ops::{Add, Sub};
 use std::f64;
 
+/// ### Also known as a quaternion
 #[derive(Clone)]
 pub struct Rotator {
     pub x : f64,
@@ -100,30 +93,6 @@ impl Default for Rotator {
             y: 0.0,
             z: 0.0,
             w: 0.0
-        }
-    }
-}
-
-impl Add for Rotator {
-    type Output = Rotator;
-    fn add(self, rhs: Self) -> Self::Output {
-        Rotator {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
-            w: self.w + rhs.w
-        }
-    }
-}
-
-impl Sub for Rotator {
-    type Output = Rotator;
-    fn sub(self, rhs: Self) -> Self::Output {
-        Rotator {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-            z: self.z - rhs.z,
-            w: self.w - rhs.w
         }
     }
 }
