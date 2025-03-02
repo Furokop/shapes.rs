@@ -3,7 +3,7 @@
 Odd project I made about projecting dots to a camera with support for rotation and translation
 
 ### Example usage
-```
+```rust
 use shapes_rs::base::*;
 use shapes_rs::buffer::*;
 use shapes_rs::components::*;
