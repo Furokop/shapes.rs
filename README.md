@@ -1,6 +1,7 @@
 # Shapes-rs
 
-Odd project I made about projecting dots to a camera with support for rotation and translation
+Rust library for projecting cool dots into a scene. Currently just prints things to a terminal.
+May work on switching to rendering faces connected with vertices instead.
 
 ### Example usage
 ```rust
